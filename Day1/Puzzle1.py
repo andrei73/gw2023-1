@@ -1,26 +1,22 @@
-import os
-from typing import List
-from collections import Counter
+<?php
 
-class Puzzle1:
-    def __call__(self, file_name: str) -> int:
-        file_path = os.path.join(os.path.dirname(__file__), file_name)
-        try:
-            with open(file_path, 'r') as file:
-                input_data = file.read()
-        except IOError:
-            raise Exception('Failed to read input file.')
+namespace Smudger\AdventOfCode2022\Day1;
 
-        groups = input_data.split("\n\n")
-        group_counts = [
-            len(set(group.replace("\n", "")))
-            for group in groups if group.strip()
-        ]
-        
-        return max(group_counts)
+use Exception;
+use Illuminate\Support\Collection;
 
-# Example usage
-if __name__ == '__main__':
-    puzzle = Puzzle1()
-    result = puzzle('input.txt')
-    print(result)
+class Puzzle1
+{
+    public function __invoke(string $fileName): int
+    {
+        $input = file_get_contents(__DIR__.'/'.$fileName)
+            ?: throw new Exception('Failed to read input file.');
+
+        return (new Collection(explode("\n\n", $input)))
+            ->map(fn (string $group) => new Collection(explode("\n", $group)))
+            ->map(fn (Collection $group) => $group->filter())
+            ->map->sum()
+            ->sortDesc()
+            ->first();
+    }
+}
